@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统维护大师 - 官方网站</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:        #0a0e17;
+    --bg-card:   #131a28;
+    --bg-hover:  #1a2333;
+    --border:    #1f2b3f;
+    --text:      #e6edf7;
+    --text-dim:  #8899b0;
+    --accent:    #22d3ee;
+    --accent-2:  #6366f1;
+    --success:   #10b981;
+    --warn:      #f59e0b;
+    --muted:     #4a5568;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: -300px; left: -300px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle,
+                rgba(34,211,238,.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: -400px; right: -400px;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle,
+                rgba(99,102,241,.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===================== 导航栏 ===================== */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(10,14,23,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .5px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(34,211,238,.4);
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    font-size: 14px;
+  }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ===================== Hero ===================== */
+  .hero { padding: 80px 0 60px; text-align: center; }
+  .hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(34,211,238,.1);
+    border: 1px solid rgba(34,211,238,.3);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .hero .badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%     { opacity: .4; }
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 620px;
+    margin: 0 auto 32px;
+  }
+  .hero .actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .25s;
+    border: none;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(34,211,238,.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(34,211,238,.5);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    background: var(--bg-card);
+    border-color: var(--accent);
+  }
+
+  /* ===================== 区块通用 ===================== */
+  section { padding: 60px 0; }
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::before {
+    content: "";
+    width: 4px; height: 26px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
+  }
+  .section-sub {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 32px;
+    margin-left: 16px;
+  }
+
+  /* ===================== 下载列表 ===================== */
+  .download-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .download-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .download-item::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .download-item.active { cursor: pointer; }
+  .download-item.active:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    transform: translateX(4px);
+    box-shadow: 0 6px 24px rgba(34,211,238,.12);
+  }
+  .download-item.active:hover::before { opacity: 1; }
+
+  .download-item.disabled {
+    cursor: not-allowed;
+    opacity: .55;
+  }
+  .download-item.disabled:hover {
+    border-color: var(--border);
+    background: var(--bg-card);
+  }
+
+  .download-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    flex: 1;
+  }
+  .file-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(34,211,238,.15), rgba(99,102,241,.15));
+    border: 1px solid rgba(34,211,238,.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--accent);
+    flex-shrink: 0;
+    font-weight: 700;
+    font-family: "Consolas", monospace;
+    letter-spacing: .5px;
+  }
+  .download-item.disabled .file-icon {
+    background: rgba(74,85,104,.15);
+    border-color: rgba(74,85,104,.3);
+    color: var(--muted);
+  }
+
+  .file-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .file-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .download-item.disabled .file-name { color: var(--text-dim); }
+
+  .file-meta {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    font-family: "Consolas", monospace;
+  }
+  .file-meta .ver {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .download-item.disabled .file-meta .ver { color: var(--muted); }
+
+  .download-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .file-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .tag-latest  { background: rgba(16,185,129,.15); color: var(--success); }
+  .tag-feature { background: rgba(99,102,241,.15); color: #a5b4fc; }
+  .tag-fix     { background: rgba(245,158,11,.15); color: var(--warn); }
+  .tag-preview { background: rgba(34,211,238,.15); color: var(--accent); }
+  .tag-none    { background: rgba(74,85,104,.25); color: var(--muted); }
+
+  .download-btn-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: rgba(34,211,238,.1);
+    border: 1px solid rgba(34,211,238,.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 16px;
+    transition: all .25s;
+  }
+  .download-item.active:hover .download-btn-icon {
+    background: var(--accent);
+    color: #0a0e17;
+    box-shadow: 0 0 16px rgba(34,211,238,.6);
+  }
+  .download-item.disabled .download-btn-icon {
+    background: rgba(74,85,104,.15);
+    border-color: rgba(74,85,104,.25);
+    color: var(--muted);
+  }
+
+  /* ===================== 整块"无更多版本" ===================== */
+  .empty-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    text-align: center;
+  }
+  .empty-block .empty-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(74,85,104,.15);
+    border: 1px solid rgba(74,85,104,.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-family: "Consolas", monospace;
+    font-weight: 700;
+  }
+  .empty-block .empty-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .empty-block .empty-desc {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.7;
+  }
+
+  /* ===================== 开发者 ===================== */
+  .dev-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .dev-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    text-align: center;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .dev-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .dev-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 40px rgba(34,211,238,.15);
+  }
+  .dev-card:hover::before { opacity: 1; }
+
+  .dev-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    border: 3px solid var(--border);
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg,
+                rgba(34,211,238,.3) 0%,
+                rgba(99,102,241,.4) 100%);
+  }
+  .dev-card:hover .dev-avatar {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(34,211,238,.5);
+  }
+  .dev-avatar img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 2;
+  }
+  .dev-avatar-letter {
+    font-family: "Consolas", monospace;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent);
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
+    position: relative;
+  }
+
+  .dev-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .dev-role {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: .5px;
+  }
+
+  /* ===================== 页脚 ===================== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 40px;
+  }
+  footer .ver {
+    color: var(--accent);
+    font-family: "Consolas", monospace;
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 32px; }
+    .hero p  { font-size: 15px; }
+    .nav-links { display: none; }
+    .download-item { padding: 14px 16px; }
+    .file-icon { width: 36px; height: 36px; font-size: 11px; }
+    .file-name { font-size: 14px; }
+    .file-meta { font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== 导航 ===================== -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-icon">⚙</div>
+      <span>系统维护大师</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#downloads">下载</a></li>
+      <li><a href="#developers">开发者</a></li>
+      <li><a href="#about">关于</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== Hero ===================== -->
+<header class="hero">
+  <div class="container">
+    <div class="badge">
+      <span class="dot"></span>
+      <span id="heroVersion">加载中...</span>
+    </div>
+    <h1>系统维护大师</h1>
+    <p>一站式系统维护解决方案 —— 硬件监控、深度垃圾清理、病毒与错误修复、本地网络检测，全部集成在一个轻量工具中。</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#downloads">立即下载</a>
+      <a class="btn btn-ghost" href="#developers">了解开发者</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== 下载列表 ===================== -->
+<section id="downloads">
+  <div class="container">
+    <h2 class="section-title">版本下载</h2>
+    <p class="section-sub">按时间从早到晚排列 · 点击任意可用条目即可下载</p>
+    <div class="download-list" id="downloadList">
+      <!-- JS 渲染 -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 开发者 ===================== -->
+<section id="developers">
+  <div class="container">
+    <h2 class="section-title">核心开发者</h2>
+    <p class="section-sub">感谢以下开发者为本项目做出的贡献</p>
+    <div class="dev-grid">
+
+      <div class="dev-card">
+        <div class="dev-avatar">
+          <img src="zsy131039p.jpg" alt="zsy131039"
+               onerror="this.style.display='none'">
+          <span class="dev-avatar-letter">Z</span>
+        </div>
+        <div class="dev-name">zsy131039</div>
+        <div class="dev-role">项目主开发者 / 架构设计</div>
+      </div>
+
+      <div class="dev-card">
+        <div class="dev-avatar">
+          <img src="Deepseekp.jpg" alt="Deepseek"
+               onerror="this.style.display='none'">
+          <span class="dev-avatar-letter" style="color:#a5b4fc;">D</span>
+        </div>
+        <div class="dev-name">Deepseek</div>
+        <div class="dev-role">技术支持 / 代码贡献</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 关于 ===================== -->
+<section id="about">
+  <div class="container">
+    <h2 class="section-title">关于项目</h2>
+    <p class="section-sub">系统维护大师 —— 让系统维护变得简单</p>
+    <div style="background:var(--bg-card); border:1px solid var(--border);
+                border-radius:14px; padding:28px 32px; font-size:14.5px;
+                color:var(--text-dim); line-height:1.9;">
+      本工具使用 Python + Tkinter 开发，通过 PyInstaller 打包为独立可执行文件，
+      无需安装任何依赖即可运行。集成硬件监控、垃圾清理、病毒修复、网络检测等模块，
+      致力于为用户提供一站式的 Windows 系统维护体验。
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 页脚 ===================== -->
+<footer>
+  <div class="container">
+    <div>© 2026 系统维护大师 · 保留所有权利</div>
+    <div style="margin-top:8px;">
+      当前版本：<span class="ver" id="footerVersion">—</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================================================================
+     ★★★  数据配置区  ★★★
+     ================================================================ -->
+<script>
+/* ---------------------------------------------------------------
+   1. 当前版本号
+   --------------------------------------------------------------- */
+const CURRENT_VERSION = "v0.01.001-Preview Edition";
+
+
+/* ---------------------------------------------------------------
+   2. 候选版本列表
+      —— 文件名格式：sysfixer-v0-XX-XXX.exe
+      —— 会自动按 date 从早到晚排序
+   --------------------------------------------------------------- */
+const CANDIDATES = [
+  {
+    file:    "sysfixer-v0-00-006.exe",
+    version: "v0.00.006-Preview Edition",
+    date:    "2026-09-05",
+    tag:     "预览",
+    tagType: "preview"
+  },
+  {
+    file:    "sysfixer-v0-00-007.exe",
+    version: "v0.00.007-Preview Edition",
+    date:    "2026-09-12",
+    tag:     "修复",
+    tagType: "fix"
+  },
+  {
+    file:    "sysfixer-v0-00-008.exe",
+    version: "v0.00.008-Preview Edition",
+    date:    "2026-09-20",
+    tag:     "功能",
+    tagType: "feature"
+  },
+  {
+    file:    "sysfixer-v0-00-009.exe",
+    version: "v0.00.009-Preview Edition",
+    date:    "2026-09-28",
+    tag:     "功能",
+    tagType: "feature"
+  },
+  {
+    file:    "sysfixer-v0-01-001.exe",
+    version: "v0.01.001-Preview Edition",
+    date:    "2026-10-05",
+    tag:     "最新",
+    tagType: "latest"
+  }
+];
+
+
+/* ================================================================
+   渲染逻辑（一般不需要修改）
+   ================================================================ */
+
+document.getElementById("heroVersion").textContent   = "当前版本 " + CURRENT_VERSION;
+document.getElementById("footerVersion").textContent = CURRENT_VERSION;
+document.title = "系统维护大师 " + CURRENT_VERSION + " - 官方网站";
+
+/* 判断是否 file:// 协议 */
+const isFileProtocol = location.protocol === "file:";
+
+/* ==================================================================
+   检测文件是否存在（双重降级，兼容各种服务器）
+   —— 返回：true / false / null（null 表示无法判断，保守视为存在）
+   ================================================================== */
+async function checkFileExists(url) {
+  if (isFileProtocol) {
+    console.log("[检测] file:// 协议无法检测:", url);
+    return null;
+  }
+
+  // ---------- 方法 1：HEAD 请求 ----------
+  try {
+    const resp = await fetch(url, { method: "HEAD", cache: "no-cache" });
+    console.log(`[检测] ${url} → HEAD ${resp.status}`);
+    if (resp.status === 404 || resp.status === 410) return false;
+    if (resp.ok || resp.status === 206) return true;
+    // 其他状态码（403/405 等）→ 继续尝试方法 2
+  } catch (e) {
+    console.log(`[检测] ${url} → HEAD 失败: ${e.message}`);
+  }
+
+  // ---------- 方法 2：GET + Range（只请求 1 字节） ----------
+  try {
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: { "Range": "bytes=0-0" },
+      cache: "no-cache"
+    });
+    console.log(`[检测] ${url} → GET+Range ${resp.status}`);
+    if (resp.status === 404 || resp.status === 410) return false;
+    if (resp.ok || resp.status === 206) return true;
+    // 其他状态码 → 保守认为存在
+    return true;
+  } catch (e) {
+    console.log(`[检测] ${url} → GET 失败: ${e.message}`);
+    // 网络错误 → 保守认为存在
+    return true;
+  }
+}
+
+/* 渲染一条下载项 */
+function renderItem(item, exists) {
+  // null 视为存在（避免误判）
+  const available = (exists === true) || (exists === null);
+
+  const tagHtml = available
+    ? (item.tag
+        ? `<span class="file-tag tag-${item.tagType || 'feature'}">${item.tag}</span>`
+        : "")
+    : `<span class="file-tag tag-none">无更新版本</span>`;
+
+  const iconText = available ? "EXE" : "—";
+  const downloadAttr = available
+    ? `href="${item.file}" download="${item.file}" title="点击下载 ${item.file}"`
+    : `href="javascript:void(0)" title="该版本尚未发布"`;
+  const className = available ? "download-item active" : "download-item disabled";
+
+  return `
+    <a class="${className}" ${downloadAttr}>
+      <div class="download-left">
+        <div class="file-icon">${iconText}</div>
+        <div class="file-info">
+          <div class="file-name">${item.file}</div>
+          <div class="file-meta">
+            <span>${item.date || ""}</span>
+            &nbsp;·&nbsp;
+            版本：<span class="ver">${item.version}</span>
+          </div>
+        </div>
+      </div>
+      <div class="download-right">
+        ${tagHtml}
+        <div class="download-btn-icon">${available ? "↓" : "×"}</div>
+      </div>
+    </a>
+  `;
+}
+
+/* 整块无可用时的空状态 */
+function renderEmptyBlock() {
+  return `
+    <div class="empty-block">
+      <div class="empty-icon">—</div>
+      <div class="empty-title">无更多版本</div>
+      <div class="empty-desc">
+        目前尚未检测到任何可下载的安装包。<br>
+        请确认 exe 文件已放置在网页同一目录下。
+      </div>
+    </div>
+  `;
+}
+
+/* 主流程 */
+async function renderDownloads() {
+  const container = document.getElementById("downloadList");
+
+  // 按日期从早到晚排序
+  const sorted = [...CANDIDATES].sort((a, b) => {
+    const da = a.date || "0000-00-00";
+    const db = b.date || "0000-00-00";
+    return da.localeCompare(db);
+  });
+
+  // 先渲染 loading 占位
+  container.innerHTML = sorted.map(item => `
+    <a class="download-item disabled">
+      <div class="download-left">
+        <div class="file-icon">...</div>
+        <div class="file-info">
+          <div class="file-name">${item.file}</div>
+          <div class="file-meta">
+            <span>${item.date || ""}</span>
+            &nbsp;·&nbsp;
+            版本：<span class="ver">${item.version}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  `).join("");
+
+  // 并发检测文件是否存在
+  const results = await Promise.all(
+    sorted.map(item => checkFileExists(item.file))
+  );
+
+  // 统计可用数量（null 视为可用）
+  let availableCount = 0;
+  const finalExists = results.map((r) => {
+    const ok = (r === true) || (r === null);
+    if (ok) availableCount++;
+    return r;
+  });
+
+  // 全部缺失（明确的 404）→ 整块显示"无更多版本"
+  if (availableCount === 0) {
+    container.innerHTML = renderEmptyBlock();
+    return;
+  }
+
+  // 正常渲染
+  container.innerHTML = sorted.map((item, i) => {
+    return renderItem(item, finalExists[i]);
+  }).join("");
+}
+
+renderDownloads();
+</script>
+
+</body>
+</html>
